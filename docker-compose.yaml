@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    image: task-api_app:latest
+    container_name: task_api_app
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: 'dev'
+      DATABASE_URL: 'postgresql://taskuser:taskpass@database:5432/taskdb?serverVersion=15&charset=utf8'
+      POSTGRES_DB: taskdb
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: taskpass
+    depends_on:
+      - database
+    volumes:
+      - ./:/app:cached
+    working_dir: /app
+    entrypoint: ["/bin/sh", "/app/docker-entrypoint.sh"]
+    command: ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+
+  database:
+    image: postgres:15-alpine
+    container_name: task_api_db
+    environment:
+      POSTGRES_DB: taskdb
+      POSTGRES_USER: taskuser
+      POSTGRES_PASSWORD: taskpass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+
+volumes:
+  database_data:
