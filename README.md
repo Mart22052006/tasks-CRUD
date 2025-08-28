@@ -17,7 +17,7 @@
 
 2. Собрать и запустить контейнеры:
 
-   docker compose build --no-cache
+   docker compose up --build -d 
 
    После запуска сервисов приложение будет доступно по: http://localhost:8000
 
