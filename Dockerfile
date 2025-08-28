@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.3-fpm-alpine
 
 # Install system deps
 RUN apk add --no-cache git unzip libzip-dev libpng-dev oniguruma-dev openssl postgresql-client postgresql-dev build-base

@@ -17,10 +17,15 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
+use App\Controller\Api\JsonRequestParserTrait;
 
 #[Route('/api/tasks')]
 class TaskController extends AbstractController
 {
+    use JsonRequestParserTrait;
+
     public function __construct(
         private TaskServiceInterface $taskService,
         private TaskRepository $repo,
@@ -33,6 +38,18 @@ class TaskController extends AbstractController
     }
 
     #[Route('', name: 'api_tasks_list', methods: ['GET'])]
+    /**
+     * @OA\Get(
+     *   path="/api/tasks",
+     *   tags={"Task"},
+     *   @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
+     *   @OA\Parameter(name="limit", in="query", @OA\Schema(type="integer")),
+     *   @OA\Parameter(name="status", in="query", @OA\Schema(type="string")),
+     *   @OA\Response(response=200, description="List of tasks"),
+     *   @OA\Response(response=400, description="Invalid params"),
+     *   @OA\Response(response=500, description="Server error")
+     * )
+     */
     public function list(Request $request): JsonResponse
     {
         try {
@@ -77,6 +94,16 @@ class TaskController extends AbstractController
     }
 
     #[Route('', name: 'api_tasks_create', methods: ['POST'])]
+    /**
+     * @OA\Post(
+     *   path="/api/tasks",
+     *   tags={"Task"},
+     *   @OA\RequestBody(@Model(type=App\DTO\TaskDto::class)),
+     *   @OA\Response(response=201, description="Task created", @Model(type=App\DTO\TaskDto::class)),
+     *   @OA\Response(response=400, description="Validation error"),
+     *   @OA\Response(response=500, description="Server error")
+     * )
+     */
     public function create(Request $request, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         try {

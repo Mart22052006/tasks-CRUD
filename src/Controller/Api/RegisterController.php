@@ -16,6 +16,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 
 #[Route('/api')]
 class RegisterController extends AbstractController
@@ -33,6 +35,16 @@ class RegisterController extends AbstractController
     }
 
     #[Route('/register', name: 'api_register', methods: ['POST'])]
+    /**
+     * @OA\Post(
+     *   path="/api/register",
+     *   tags={"User"},
+     *   @OA\RequestBody(@Model(type=App\DTO\RegisterDto::class)),
+     *   @OA\Response(response=201, description="User created", @Model(type=App\DTO\UserDto::class)),
+     *   @OA\Response(response=400, description="Validation error"),
+     *   @OA\Response(response=500, description="Server error")
+     * )
+     */
     public function register(Request $request, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         try {
