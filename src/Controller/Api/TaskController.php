@@ -98,9 +98,25 @@ class TaskController extends AbstractController
      * @OA\Post(
      *   path="/api/tasks",
      *   tags={"Task"},
-     *   @OA\RequestBody(@Model(type=App\DTO\TaskDto::class)),
-     *   @OA\Response(response=201, description="Task created", @Model(type=App\DTO\TaskDto::class)),
-     *   @OA\Response(response=400, description="Validation error"),
+     *   @OA\RequestBody(
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(ref=@Model(type=App\DTO\TaskDto::class))
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Task created",
+     *     @OA\JsonContent(ref=@Model(type=App\DTO\TaskDto::class))
+     *   ),
+     *   @OA\Response(
+     *     response=400,
+     *     description="Validation error",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(property="errors", type="object")
+     *     )
+     *   ),
      *   @OA\Response(response=500, description="Server error")
      * )
      */
